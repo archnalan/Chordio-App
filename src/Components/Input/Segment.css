@@ -1,0 +1,6 @@
+.segment{
+    display: flex;
+    flex-direction: column;    
+    margin-right: 1em;
+    cursor: pointer;
+}

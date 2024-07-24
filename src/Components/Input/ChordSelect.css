@@ -1,0 +1,9 @@
+.chord__select{
+ display: flex;
+}
+
+.chord__select-tag{
+    width: 5em;
+    max-width: max-content;
+    font-family: Inter;
+}

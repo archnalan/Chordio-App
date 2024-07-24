@@ -1,0 +1,27 @@
+.line{
+   display: flex;
+   
+}
+.lyricLine{
+   flex: 1;
+   display: flex;
+   margin-bottom: 2em;
+   border: 1px solid grey;   
+}
+.actions{
+   display: flex;
+   align-items: flex-end;   
+   margin-bottom: 2em;
+   border: 1px solid grey;
+}
+.actions-edit{
+   margin-right: 1em;
+   cursor: pointer;
+}
+.actions-delete{
+   cursor: pointer;
+   margin-right: 1em;
+}
+.actions-add{
+   cursor: pointer;
+}

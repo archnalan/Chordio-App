@@ -1,0 +1,69 @@
+.hymn__select{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 75%;
+    margin-bottom: 2em;
+}
+.hymn__select-title{
+    font-size: 1.5em;
+    font-weight: 600;
+    font-family: Inter;
+}
+
+.hymn__verse{   
+   padding-bottom: 10%;   
+}
+.verse__input {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    bottom: 0;
+    position: fixed;
+    width: 75%;
+}
+
+.verse__inputbox {
+    width: 100%;
+    height: 5em;
+    max-height: 15em;
+    margin-bottom: 1.5em;
+    margin-right: 1em;
+    border-radius: 1em;
+    padding: 1em;
+
+}
+
+.verse__inputbox:focus {
+    border: 1px solid rgb(58, 58, 58);
+}
+
+.verse__btnSubmit {
+    border: none;
+    font-family: inter;
+    background: transparent;
+    position: absolute;
+    right: 1em;
+    top: .5em;
+}
+
+.verse__line-submit {
+    font-size: 1em;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.upload {
+    font-size: 2.5em;
+    cursor: pointer;
+}
+
+.upload:active {    
+    color: black;
+}
+
+.upload:disabled {   
+    color: grey;
+}
