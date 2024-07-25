@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import LyricLine from "./LyricLine";
 import "./Verse.css";
 import { LuArrowUpLeftSquare } from "react-icons/lu";
-import { MdOutlineDelete } from "react-icons/md";
+import { MdCancelPresentation } from "react-icons/md";
 import { LineModel } from "../Sections/LineModel";
+import Chord from "./Chord";
 
 interface VerseProps {
   lines: LineModel[];
@@ -56,16 +57,29 @@ const Verse: React.FC<VerseProps> = ({ lines, setLines, setInputDisabled }) => {
 
   //From LyricLine component
   const addInput = (lnIndex: number) => {
-    const newLines = [...lines];
+    const LinesToModify = [...lines];
+
     const newLineIndex = lnIndex + 1;
-    newLines.splice(newLineIndex, 0, {
+
+    LinesToModify.splice(newLineIndex, 0, {
       lyricLineOrder: newLineIndex,
       verseId: lineToEdit?.verseId || 1,
       segments: "",
     }); // Insert a new empty line at the correct position
+
+    //update the subsequent lines
+    for (let i = newLineIndex; i < LinesToModify.length; i++) {
+      LinesToModify[i].lyricLineOrder = i + 1;
+    }
+    const newLines = LinesToModify; // Now the list is new
+    console.log("🚀 ~ addInput ~ newLines:", newLines);
     setLines(newLines);
     setLineToEdit(newLines[newLineIndex]); // Set the new line to edit mode
   };
+
+  useEffect(() => {
+    console.log("🚀 ~ addInput ~ newLines:", lineToEdit);
+  }, [lineToEdit]);
 
   return (
     <div className="verse">
@@ -73,20 +87,23 @@ const Verse: React.FC<VerseProps> = ({ lines, setLines, setInputDisabled }) => {
         {lines.map((line, index) => (
           <div className="verse__line" key={index}>
             {lineToEdit && lineToEdit.lyricLineOrder === line.lyricLineOrder ? (
-              <form onSubmit={handleEditChanges} className="verse__line-edit">
-                <input
-                  ref={editInput}
-                  value={lineToEdit.segments}
-                  onChange={handleEditOnChange}
-                  placeholder="Enter lyric line here..."
-                />
-                <button type="submit" className="verse__line-submit">
-                  <LuArrowUpLeftSquare />
-                </button>
-                <span className="actions-delete" onClick={handleEditCancel}>
-                  <MdOutlineDelete />
-                </span>
-              </form>
+              <div className="verse__line-change">
+                <Chord />
+                <form onSubmit={handleEditChanges} className="verse__line-edit">
+                  <input
+                    ref={editInput}
+                    value={lineToEdit.segments}
+                    onChange={handleEditOnChange}
+                    placeholder="Enter lyric line here..."
+                  />
+                  <button type="submit" className="verse__line-submit">
+                    <LuArrowUpLeftSquare />
+                  </button>
+                  <span className="actions-delete" onClick={handleEditCancel}>
+                    <MdCancelPresentation />
+                  </span>
+                </form>
+              </div>
             ) : (
               <LyricLine
                 key={index}

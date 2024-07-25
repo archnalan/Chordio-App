@@ -40,9 +40,8 @@ const SectionInput: React.FC = () => {
   const handleVerse = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    let verseLyrics = verse.lyrics;
-    if (verseLyrics !== "") {
-      let lyricLines = verseLyrics.trim().split("\n");
+    if (verse.lyrics !== "") {
+      let lyricLines = verse.lyrics.trim().split("\n");
 
       let newLines = lyricLines.map((line, index) => ({
         lyricLineOrder: index + 1,
@@ -55,6 +54,10 @@ const SectionInput: React.FC = () => {
       setInputDisabled(true);
     }
   };
+  useEffect(() => {
+    console.log("🚀 ~ handleHymnChange ~ verse:", verse);
+    console.log("split lines", lines);
+  }, [lines]);
 
   const handleHymnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedHymn = hymns.find(
@@ -64,7 +67,6 @@ const SectionInput: React.FC = () => {
     if (selectedHymn) {
       setVerse((prevVerse) => ({ ...prevVerse, hymnId: selectedHymn.id }));
     }
-    console.log("🚀 ~ handleHymnChange ~ verse:", verse);
   };
 
   return (
