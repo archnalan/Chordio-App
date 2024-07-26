@@ -5,14 +5,22 @@ import { LuArrowUpLeftSquare } from "react-icons/lu";
 import { MdCancelPresentation } from "react-icons/md";
 import { LineModel } from "../Sections/LineModel";
 import Chord from "./Chord";
+import { VerseModel } from "../Sections/VerseModel";
+import axios from "axios";
 
 interface VerseProps {
+  verse: VerseModel;
   lines: LineModel[];
   setLines: React.Dispatch<React.SetStateAction<LineModel[]>>;
   setInputDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Verse: React.FC<VerseProps> = ({ lines, setLines, setInputDisabled }) => {
+const Verse: React.FC<VerseProps> = ({
+  verse,
+  lines,
+  setLines,
+  setInputDisabled,
+}) => {
   const [lineToEdit, setLineToEdit] = useState<LineModel | null>(null);
 
   const editInput = useRef<HTMLInputElement>(null);
@@ -81,6 +89,49 @@ const Verse: React.FC<VerseProps> = ({ lines, setLines, setInputDisabled }) => {
     console.log("🚀 ~ addInput ~ newLines:", lineToEdit);
   }, [lineToEdit]);
 
+  const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    try {
+      const verseCreate = {
+        number: verse.number,
+        hymnId: verse.hymnId,
+      };
+      console.log("🚀 ~ handleSave ~ verseCreate:", verseCreate);
+
+      const linesCreate = lines.map((line) => ({
+        LyricLineOrder: line.lyricLineOrder,
+        verseId: line.verseId,
+      }));
+      console.log("🚀 ~ linesCreate ~ linesCreate:", linesCreate);
+
+      const segmentsCreate = lines.flatMap((line, lineindex) =>
+        line.segments.split(" ").map((segment, segmentIndex) => ({
+          lyric: segment,
+          lyricOrder: segmentIndex + 1,
+          lyricLineId: lineindex + 1,
+        }))
+      );
+
+      console.log("🚀 ~ handleSave ~ segmentCreate:", segmentsCreate);
+
+      const payload = {
+        verseCreate,
+        linesCreate,
+        segmentsCreate,
+      };
+
+      const response = axios.post(
+        "https://localhost:7077/api/verses/create",
+        payload
+      );
+
+      console.log("🚀 ~ handleSave ~ response:", response);
+    } catch (error) {
+      console.error("Error Saving verse", error);
+    }
+  };
+
   return (
     <div className="verse">
       <div>
@@ -120,7 +171,9 @@ const Verse: React.FC<VerseProps> = ({ lines, setLines, setInputDisabled }) => {
       </div>
       {lines.length !== 0 && (
         <div className="verse__btns">
-          <button className="verse__btns-save">Save</button>
+          <button className="verse__btns-save" onClick={handleSave}>
+            Save
+          </button>
           <button
             className="verse__btns-clear"
             onClick={() => {

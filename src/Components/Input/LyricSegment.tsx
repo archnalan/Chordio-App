@@ -1,11 +1,12 @@
 import React, { useRef } from "react";
 import Chord from "./Chord";
 import "./Segment.css";
+import { SegmentModel } from "../Sections/SegmentModel";
 
 interface Props {
-  segment: string;
-  segments: string[];
-  setSegments: React.Dispatch<React.SetStateAction<string[]>>;
+  segment: SegmentModel;
+  segments: SegmentModel[];
+  setSegments: React.Dispatch<React.SetStateAction<SegmentModel[]>>;
 }
 const LyricSegment: React.FC<Props> = ({ segment, segments, setSegments }) => {
   const chordInputRef = useRef<HTMLInputElement>(null);
@@ -24,7 +25,7 @@ const LyricSegment: React.FC<Props> = ({ segment, segments, setSegments }) => {
         />
       </div>
       <div className="segment__lyric" onClick={handleInputFocus}>
-        <span key={Date.now()}>{segment}</span>
+        <span key={segment.lyricOrder}>{segment.lyric}</span>
       </div>
     </div>
   );

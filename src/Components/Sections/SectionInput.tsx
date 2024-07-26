@@ -13,6 +13,8 @@ const SectionInput: React.FC = () => {
   const [verse, setVerse] = useState<VerseModel>({
     number: 0,
     hymnId: 0,
+    linesCreate: [],
+    segmentsCreate: [],
     lyrics: "",
   });
   const [lines, setLines] = useState<LineModel[]>([]);
@@ -69,8 +71,16 @@ const SectionInput: React.FC = () => {
     }
   };
 
+  const handleVerseNumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVerse((prevVerse) => ({
+      ...prevVerse,
+      number: parseInt(e.target.value),
+    }));
+    console.log("🚀 ~ setVerse ~ e.target.value:", e.target.value);
+  };
+
   return (
-    <div>
+    <>
       <div className="hymn__select">
         <select className="hymn__select-title" onChange={handleHymnChange}>
           {hymns.map((hymn) => (
@@ -79,9 +89,37 @@ const SectionInput: React.FC = () => {
             </option>
           ))}
         </select>
+
+        <div
+          className="verse__number btn-group"
+          role="group"
+          aria-label="Basic radio togle button group"
+        >
+          {[1, 2, 3, 4, 5, 6].map((num) => (
+            <div key={num}>
+              <input
+                type="radio"
+                className="btn-check"
+                name="btnradio"
+                id={`btnradio${num}`}
+                autoComplete="off"
+                checked={verse.number === num}
+                onChange={handleVerseNumChange}
+                value={num}
+              />
+              <label
+                htmlFor={`btnradio${num}`}
+                className="btn btn-outline-primary"
+              >
+                Verse {num}
+              </label>
+            </div>
+          ))}
+        </div>
         <div className="hymn__verse">
           <Verse
             lines={lines}
+            verse={verse}
             setLines={setLines}
             setInputDisabled={setInputDisabled}
           />
@@ -111,7 +149,7 @@ const SectionInput: React.FC = () => {
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -5,6 +5,7 @@ import { CiEdit } from "react-icons/ci";
 import { MdOutlineDelete } from "react-icons/md";
 import { TbPlaylistAdd } from "react-icons/tb";
 import { LineModel } from "../Sections/LineModel";
+import { SegmentModel } from "../Sections/SegmentModel";
 
 interface Props {
   lineIndex: number;
@@ -23,12 +24,20 @@ const LyricLine: React.FC<Props> = ({
   editLine,
   addInput,
 }) => {
-  const [segments, setSegments] = useState<string[]>([]);
+  const [segments, setSegments] = useState<SegmentModel[]>([]);
 
   useEffect(() => {
     const handleLine = (line: string) => {
-      let seg = line.split(" ");
-      setSegments(seg);
+      if (line !== "") {
+        let segs = line.trim().split(" ");
+
+        let newSegments = segs.map((seg, index) => ({
+          lyric: seg,
+          lyricOrder: index + 1,
+          lyricLineId: 1,
+        }));
+        setSegments(newSegments);
+      }
     };
     handleLine(line.segments);
   }, [line.segments]);
@@ -67,7 +76,13 @@ const LyricLine: React.FC<Props> = ({
         <span className="actions-delete" onClick={handleDelete}>
           <MdOutlineDelete />
         </span>
-        <span className="actions-add" onClick={handleInputAdd}>
+        <span
+          className="actions-add"
+          onClick={() => {
+            handleInputAdd;
+            segmentCreate;
+          }}
+        >
           <TbPlaylistAdd />
         </span>
       </div>

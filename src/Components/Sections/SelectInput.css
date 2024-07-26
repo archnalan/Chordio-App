@@ -10,6 +10,15 @@
     font-size: 1.5em;
     font-weight: 600;
     font-family: Inter;
+    margin-bottom: 1em;
+}
+
+.verse__number{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;    
+    width: 100%; 
+   
 }
 
 .hymn__verse{   
@@ -67,3 +76,4 @@
 .upload:disabled {   
     color: grey;
 }
+
