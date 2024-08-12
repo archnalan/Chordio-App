@@ -1,0 +1,62 @@
+
+.chord{
+ /* display: none; */
+ width: fit-content;
+
+}
+
+form{
+    display: inline-block;
+}
+.chord__input{
+    width: 100%;
+    border: none;
+    font-family: Inter;
+    font-size: 1.1em;
+    font-weight: 7
+    00;    
+    box-sizing: content-box;   
+}
+
+.chord__input::placeholder{
+    font-size: .75em;
+    font-weight: 500;
+}
+
+.chord__bolden{
+    display: flex;    
+}
+
+.chord__error{
+    display: flex;
+    position: relative;
+    width: 100%;
+}
+.chord__error-btn{
+    background-color: rgb(255, 66, 66);
+    color: white;
+    border: 1px solid black;
+    border-radius: .25em;
+    padding: 0.25em 1em;
+    cursor: pointer;
+}
+.chord__display{
+    display: none;
+    position: absolute;
+    bottom: calc(100% + .5em);
+    width: 100%;
+    border: 1px solid grey;    
+}
+.chord__error:hover .chord__display{
+    display: block;
+}
+
+
+.chord__display p{
+    font-weight: lighter;
+    font-size: .5em;
+    background: black;
+    color: white;
+    margin: 0;
+    border-radius: .5em;   
+}
