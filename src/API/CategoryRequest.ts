@@ -1,4 +1,4 @@
-import { HymnModel } from "../DataModels/HymnModel";
+import { CategoryModel } from "../DataModels/CategoryModel";
 import API from "./API";
 
 const apiEndpoints = {  
@@ -11,9 +11,9 @@ const apiEndpoints = {
 
 const fetchAllCategories = () => API.get(apiEndpoints.fetchAllCategories);
 const fetchSpecificCategory = (id: number) => API.get(apiEndpoints.fetchSpecificCategory(id));
-const createCategory = (CategoryData: HymnModel) => API.post(apiEndpoints.createCategory, CategoryData);
+const createCategory = (CategoryData: CategoryModel) => API.post(apiEndpoints.createCategory, CategoryData);
 const deleteCategory = (id: number) => API.delete(apiEndpoints.deleteCategory(id));
-const editCategory = (id: number, CategoryData: HymnModel) => API.put(apiEndpoints.editCategory(id), CategoryData);
+const editCategory = (id: number, CategoryData: CategoryModel) => API.put(apiEndpoints.editCategory(id), CategoryData);
 
 export default {  
   fetchAllCategories,

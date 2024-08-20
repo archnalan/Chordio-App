@@ -1,0 +1,13 @@
+.sidebar-text {
+    overflow: hidden;
+    transition: width 0.3s ease;
+}
+
+.sidebar-text.collapsed {
+    width: 0;
+}
+
+.sidebar-text.expanded {
+    width: 100%;
+    margin-left: 1rem;
+}

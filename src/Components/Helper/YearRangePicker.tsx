@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DatePicker, message } from "antd";
 import moment, { Moment } from "moment";
+import "./YearRangePicker.css";
 
 const { RangePicker } = DatePicker;
 
@@ -20,6 +21,14 @@ const YearRangePicker: React.FC<YearPickerProps> = ({
       ? [moment(yearStart, "YYYY"), moment(yearEnd, "YYYY")]
       : null
   );
+
+  useEffect(() => {
+    if (yearStart !== null && yearEnd !== null) {
+      setSelectedRange([moment(yearStart, "YYYY"), moment(yearEnd, "YYYY")]);
+    } else {
+      setSelectedRange(null);
+    }
+  }, [yearStart, yearEnd]);
 
   const handleYearRangeChange = (dates: [Moment, Moment] | null) => {
     if (dates) {
@@ -46,10 +55,23 @@ const YearRangePicker: React.FC<YearPickerProps> = ({
     <RangePicker
       picker="year"
       format="YYYY"
-      className="w-100 custom-range-picker"
+      className="w-100 custom-range-picker "
       value={selectedRange}
       onChange={handleYearRangeChange}
       disabledDate={disabledDate}
+      defaultPickerValue={
+        yearStart !== null && yearEnd !== null
+          ? [moment(yearStart, "YYYY"), moment(yearEnd, "YYYY")]
+          : undefined
+      }
+      onOpenChange={(open) => {
+        if (open && selectedRange) {
+          setSelectedRange([
+            moment(selectedRange[0].year(), "YYYY"),
+            moment(selectedRange[1].year(), "YYYY"),
+          ]);
+        }
+      }}
     />
   );
 };

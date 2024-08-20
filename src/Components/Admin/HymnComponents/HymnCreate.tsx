@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import Requests from "./Requests";
 import { useNavigate } from "react-router-dom";
 import {
   HymnWithCategory,
@@ -59,8 +58,8 @@ const HymnCreate: React.FC = () => {
   }, [yearStart, yearEnd]);
 
   useEffect(() => {
-    const getCategory = async () => {
-      const response = await axios.get(`${Requests.fetchAllCategories}`);
+    /* const getCategory = async () => {
+       const response = await axios.get(`${Requests.fetchAllCategories}`);
       const categories = response.data.$values;
 
       const validatedCategories = CategorySchema.array().safeParse(categories);
@@ -74,7 +73,7 @@ const HymnCreate: React.FC = () => {
       }
       setCategories(validatedCategories.data);
     };
-    getCategory();
+    getCategory(); */
   }, []);
 
   const onSubmit = async (data: HymnWithCategory) => {

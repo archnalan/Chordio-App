@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import Requests from "./Requests";
 import {
   HymnSchema,
   HymnWithCategory,
@@ -11,7 +10,7 @@ import SongRequest from "../../../API/SongRequest";
 import { idSchema } from "../../../DataModels/ValidateID";
 
 const SongDetails = () => {
-  const [Song, setSong] = useState<HymnWithCategory>({
+  const [song, setSong] = useState<HymnWithCategory>({
     id: 0,
     number: 0,
     title: "",
@@ -35,16 +34,10 @@ const SongDetails = () => {
         console.error("🚀 ~ getSong ~ songResult.error:", songResult.error);
         return;
       }
-
-      console.log("🚀 ~ getSong ~ response:", response);
       setSong(songResult.data);
     };
     getSong();
   }, []);
-
-  useEffect(() => {
-    if (Song) console.log(Song);
-  }, [Song]);
 
   return (
     <div className="vh-100 d-flex flex-column justify-content-start align-items-center bg-light m-3 ">
@@ -52,27 +45,27 @@ const SongDetails = () => {
         <h1 className="mb-5">Song Details</h1>
         <div className="d-flex justify-content-between text-end mb-4">
           <strong>Number</strong>
-          <span>{Song.number}</span>
+          <span>{song.number}</span>
         </div>
 
         <div className="d-flex justify-content-between text-end mb-4">
           <strong>Title</strong>
-          <span>{Song.title}</span>
+          <span>{song.title}</span>
         </div>
 
         <div className="d-flex justify-content-between text-end mb-4">
           <strong>Category</strong>
-          <span>{Song.categoryName}</span>
+          <span>{song.categoryName}</span>
         </div>
 
         <div className="d-flex justify-content-between text-end mb-4">
           <strong>Author</strong>
-          <span>{Song.writtenBy}</span>
+          <span>{song.writtenBy}</span>
         </div>
 
         <div className="d-flex justify-content-between text-end mb-4">
           <strong>History</strong>
-          <span>{Song.history}</span>
+          <span>{song.history}</span>
         </div>
         <div className="d-flex justify-content-end mb-3">
           <Link to={"/admin/songs"} className="btn btn-danger me-2">

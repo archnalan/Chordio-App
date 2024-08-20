@@ -1,7 +1,7 @@
 import { ChartModel } from "../DataModels/ChartModel";
 import API from "./API";
 
-const apiEndpoints = {
+export const apiEndpoints = {
   fetchAllChordCharts: 'api/charts',
   fetchSpecificChordChart: (id: number) => `api/charts/${id}`,
   fetchAllChartsWithParentChords: 'admin/api_chordcharts/charts',

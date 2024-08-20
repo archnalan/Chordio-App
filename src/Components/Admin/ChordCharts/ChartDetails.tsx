@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 import { ChartModel, ChartSchema } from "../../../DataModels/ChartModel";
 import { ChordSchema } from "../../../DataModels/ChordModel";
 import { idSchema } from "../../../DataModels/ValidateID";
+import { TbArrowBigLeft } from "react-icons/tb";
 
 const ChartDetails: React.FC = () => {
   const [chart, setChart] = useState<ChartModel>({
@@ -85,7 +86,17 @@ const ChartDetails: React.FC = () => {
   return (
     <div className="d-flex w-100 vh-100 justify-content-center align-items-start bg-light mt-3">
       <div className="w-50 border bg-white px-5 pt-3 pb-3 rounded">
-        <h3>Chord Chart Details</h3>
+        <div className="d-flex align-items-center mb-3">
+          <Link
+            to={"/admin/chordcharts"}
+            className="text-danger hover:text-dark me-4"
+          >
+            <TbArrowBigLeft />
+          </Link>
+          <h3>
+            <strong>Chord Chart Details</strong>
+          </h3>
+        </div>
         <div className="d-flex justify-content-between text-end mb-3">
           <strong>Chord:</strong>
           <span>{chord}</span>
@@ -126,12 +137,15 @@ const ChartDetails: React.FC = () => {
           <span>{chart.positionDescription}</span>
         </div>
         <div className="d-flex justify-content-end mb-3">
-          <Link to={"/admin/chordcharts"} className="btn btn-danger me-2">
+          <Link
+            to={"/admin/chordcharts"}
+            className="btn btn-outline-danger me-2"
+          >
             Back
           </Link>
           <Link
             to={`/admin/chordcharts/edit/${id}`}
-            className="btn btn-primary"
+            className="btn btn-outline-primary"
           >
             Edit
           </Link>

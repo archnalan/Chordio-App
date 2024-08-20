@@ -16,7 +16,6 @@ import {
 import YearRangePicker from "../../Helper/YearRangePicker";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ParseDateRange from "../../Helper/ParseDateRange";
 
 const SongEdit: React.FC = () => {
   const {
@@ -36,6 +35,8 @@ const SongEdit: React.FC = () => {
   const [songData, setSongData] = useState<HymnWithCategory | undefined>(
     undefined
   );
+  const [startYr, setStartYr] = useState<number | null>(null);
+  const [endYr, setEndYr] = useState<number | null>(null);
 
   /*  const { startYear, endYear } = ParseDateRange(dateRange); */
 
@@ -75,6 +76,25 @@ const SongEdit: React.FC = () => {
       setValue("history", songData.history);
     }
   }, [songData]);
+
+  const ParseDateRange = (dateRage: string) => {
+    if (!dateRage) {
+      return { startYear: null, endYear: null };
+    }
+
+    const [start, end] = dateRage.split("-");
+    return {
+      startYear: parseInt(start, 10),
+      endYear: parseInt(end, 10),
+    };
+  };
+  useEffect(() => {
+    if (dateRange) {
+      const { startYear, endYear } = ParseDateRange(dateRange);
+      setStartYr(startYear);
+      setEndYr(endYear);
+    }
+  }, [dateRange]);
 
   useEffect(() => {
     const getCategories = async () => {
@@ -118,6 +138,11 @@ const SongEdit: React.FC = () => {
       console.error("Error Saving Song", error);
     }
   };
+
+  useEffect(() => {
+    console.log("🚀 ~ startY:", startYr);
+    console.log("🚀 ~ startY:", endYr);
+  }, [startYr, endYr]);
 
   return (
     <div className="d-flex w-100 vh-100 justify-content-center align-items-start bg-light mt-3">
@@ -214,12 +239,12 @@ const SongEdit: React.FC = () => {
                       yearStart={
                         field.value
                           ? parseInt(field.value.split("-")[0], 10)
-                          : null
+                          : startYr
                       }
                       yearEnd={
                         field.value
                           ? parseInt(field.value.split("-")[1], 10)
-                          : null
+                          : endYr
                       }
                       onChange={(range) => {
                         if (range) {

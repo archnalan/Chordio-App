@@ -103,14 +103,17 @@ const ChordChart: React.FC = () => {
 
   return (
     <>
-      <div className="d-flex flex-column justify-content-start align-items-center bg-light m-3 vh-100">
+      <div className="d-flex flex-column justify-content-start align-items-center bg-light m-3 ">
         <h1>List of Chord Charts</h1>
         {successMessage && (
           <div className="w-75 alert alert-success text-wrap" role="alert">
             {successMessage}
           </div>
         )}
-        <div className="w-75 rounded  border-shadow p-3">
+        <div
+          className="w-75 rounded  border-shadow p-3 "
+          style={{ width: "100%" }}
+        >
           <div className="d-flex justify-content-between mb-3">
             <div className="d-flex w-50 justify-content-start align-items-center position-relative me-5">
               <input
@@ -136,43 +139,52 @@ const ChordChart: React.FC = () => {
             </Link>
           </div>
           <div className="container d-flex ">
-            {currentCharts.map((chart, index) => (
-              <div className="row row-cols-4 ms-4 mb-4 " key={index}>
-                <div className="card col w-100 ">
-                  <img
-                    src={chart.filePath}
-                    alt={chart.filePath}
-                    className="w-100 card-img-top  img-thumbnail mt-2"
-                  />
-                  <div className="card-body">
-                    <h5 className="card-title">Fret: {chart.fretPosition}</h5>
-                    <p className="card-text">{chart.positionDescription}</p>
-                  </div>
-                  <div className="card-footer d-flex justify-content-center">
-                    <Link
-                      to={`${chart.id}`}
-                      className="btn btn-sm btn-info me-2"
-                    >
-                      <FiList />
-                    </Link>
-                    <Link
-                      to={`edit/${chart.id}`}
-                      className="btn btn-sm btn-primary me-2"
-                    >
-                      <FiEdit />
-                    </Link>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDelete(chart.id)}
-                    >
-                      <FiTrash2 />
-                    </button>
+            <div className="row row-cols-4">
+              {currentCharts.map((chart, index) => (
+                <div className="col mb-4" key={index}>
+                  <div
+                    className="card d-flex flex-column"
+                    style={{ height: "100%" }}
+                  >
+                    <img
+                      src={chart.filePath}
+                      alt={chart.filePath}
+                      className="w-100 card-img-top  img-thumbnail "
+                    />
+                    <div className="card-body">
+                      <h5 className="card-title">Fret: {chart.fretPosition}</h5>
+                      <p className="card-text">
+                        {chart.positionDescription &&
+                        chart.positionDescription.length > 25
+                          ? `${chart.positionDescription.slice(0, 25)}...`
+                          : chart.positionDescription}
+                      </p>
+                    </div>
+                    <div className="card-footer d-flex justify-content-center bg-dark-subtle bg-gradient">
+                      <Link
+                        to={`${chart.id}`}
+                        className="btn btn-sm btn-outline-success me-2"
+                      >
+                        <FiList />
+                      </Link>
+                      <Link
+                        to={`edit/${chart.id}`}
+                        className="btn btn-sm btn-outline-primary me-2"
+                      >
+                        <FiEdit />
+                      </Link>
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => handleDelete(chart.id)}
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-
           <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
         </div>
       </div>

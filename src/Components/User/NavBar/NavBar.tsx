@@ -1,12 +1,14 @@
 import "./NavBar.css";
 import { useState, useEffect } from "react";
-import PageService from "../../../API/PageService";
-import Logo_light from "../../../assets/logo_light.png";
-import Logo_dark from "../../../assets/logo_dark.png";
-import Search_light from "../../../assets/search-b.png";
-import Search_dark from "../../../assets/search-w.png";
-import T_Dark from "../../../assets/night.png";
-import T_Light from "../../../assets/day.png";
+import PageService from "../../../API/PageRequest";
+import {
+  Search_dark,
+  Search_light,
+  logo_light,
+  logo_dark,
+  T_dark,
+  T_day,
+} from "../../../assets/NavAssets";
 import PropTypes from "prop-types";
 import { useThemeContext } from "../../Contexts/ThemeContext";
 import { PageModel, PageSchema } from "../../../DataModels/PageModel";
@@ -50,7 +52,7 @@ const NavBar = () => {
   return (
     <div className="nav_bar">
       <img
-        src={theme == "light" ? Logo_light : Logo_dark}
+        src={theme == "light" ? logo_light : logo_dark}
         alt=""
         className="logo"
       />
@@ -65,7 +67,7 @@ const NavBar = () => {
       </div>
       <img
         onClick={() => toggle_mode()}
-        src={theme == "light" ? T_Dark : T_Light}
+        src={theme == "light" ? T_dark : T_day}
         alt=""
         className="toggle_icon"
       />

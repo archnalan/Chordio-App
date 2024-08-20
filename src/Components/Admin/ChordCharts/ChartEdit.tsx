@@ -1,34 +1,53 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import ChartRequest from "../../../API/ChartRequest";
+import ChartRequest, { apiEndpoints } from "../../../API/ChartRequest";
 import ChordRequest from "../../../API/ChordRequest";
 import axios from "axios";
 import { RiAddCircleFill } from "react-icons/ri";
 import { IoMdCloseCircleOutline } from "react-icons/io";
-import { ChartModel, ChartSchema } from "../../../DataModels/ChartModel";
+import {
+  ChartEditModel,
+  ChartEditSchema,
+} from "../../../DataModels/ChartModel";
 import { ChordModel, ChordSchema } from "../../../DataModels/ChordModel";
 import { idSchema } from "../../../DataModels/ValidateID";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import API from "../../../API/API";
+import ChartPreview from "./ChartPreview";
+import AudioPreview from "./AudioPreview";
 
 const ChartEdit = () => {
-  const [chart, setChart] = useState<ChartModel>({
+  const {
+    register,
+    watch,
+    setValue,
+    setError,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ChartEditModel>({
+    mode: "all",
+    resolver: zodResolver(ChartEditSchema),
+  });
+  const [chartData, setChartData] = useState<ChartEditModel>({
     id: 0,
     filePath: "",
-    /* chartUpload: null, */
     chordId: 1,
     fretPosition: 1,
+    chartUpload: null,
+    chartAudioUpload: null,
     chartAudioFilePath: "",
-    /* chartAudioUpload: null, */
     positionDescription: "",
   });
 
-  const [chord, setChord] = useState("");
+  const [chord, setChord] = useState<ChordModel>();
   const [chordChange, setChordChange] = useState<ChordModel[]>([]);
   const [errorResult, setErrorResult] = useState([]);
   const [chartPreview, setChartPreview] = useState("");
   const [audioPreview, setAudioPreview] = useState("");
 
   const { id } = useParams();
-  const navigate = useNavigate();
+  const exit = useNavigate();
 
   useEffect(() => {
     const getChart = async () => {
@@ -39,7 +58,7 @@ const ChartEdit = () => {
           validatedId
         );
 
-        const chartResult = ChartSchema.safeParse(response.data);
+        const chartResult = ChartEditSchema.safeParse(response.data);
 
         if (!chartResult.success) {
           console.error(
@@ -48,11 +67,17 @@ const ChartEdit = () => {
           );
           return;
         }
-        setChart(chartResult.data);
+        setChartData(chartResult.data);
 
-        if (response.data) {
-          setChartPreview(response.data.filePath);
-          setAudioPreview(response.data.chartAudioFilePath);
+        if (chartResult.data) {
+          chartResult.data.filePath &&
+            setChartPreview(chartResult.data.filePath);
+          chartResult.data.chartAudioFilePath &&
+            setAudioPreview(chartResult.data.chartAudioFilePath);
+          chartResult.data.chordId &&
+            setChord(
+              chordChange.find((ch) => ch.id === chartResult.data.chordId)
+            );
         }
       } catch (error) {
         console.error("Error:", error);
@@ -62,10 +87,28 @@ const ChartEdit = () => {
   }, [id]);
 
   useEffect(() => {
+    setValue("id", chartData.id);
+    setValue("filePath", chartData.filePath);
+    if (chartData.filePath) {
+      setChartPreview(chartData.filePath);
+    }
+    setValue("chordId", chartData.chordId);
+    setValue("fretPosition", chartData.fretPosition);
+
+    const chartAudio = chartData.chartAudioFilePath;
+    if (chartAudio) {
+      const audioFile = chartAudio.split("/").pop();
+
+      setValue("chartAudioFilePath", audioFile);
+    }
+    setValue("positionDescription", chartData.positionDescription);
+  }, [chartData]);
+
+  useEffect(() => {
     const chordSelect = async () => {
       try {
-        if (chart.chordId !== null) {
-          const response = await ChordRequest.fetchChordById(chart.chordId);
+        if (chartData.chordId !== null) {
+          const response = await ChordRequest.fetchChordById(chartData.chordId);
 
           const chordResult = ChordSchema.safeParse(response.data);
 
@@ -84,7 +127,7 @@ const ChartEdit = () => {
       }
     };
     chordSelect();
-  }, [chart.chordId]);
+  }, [chartData.chordId]);
 
   useEffect(() => {
     const chordsSelect = async () => {
@@ -109,86 +152,121 @@ const ChartEdit = () => {
   }, []);
 
   const handleChartUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const chartFile = e.target.files[0];
+    //clear previous states
+    setValue("chartUpload", null);
+    setValue("filePath", "");
+    setChartPreview("");
+    setError("chartUpload", {});
+
+    const chartFile = e.target.files?.[0];
     if (chartFile && chartFile.type.substr(0, 5) === "image") {
       const chartReader = new FileReader();
       chartReader.onload = () => {
-        setChart((prevChart) => ({
-          ...prevChart,
-          chartUpload: chartFile,
-          filePath: chartFile.name,
-        }));
-        setChartPreview(chartReader.result);
+        setValue("chartUpload", chartFile);
+        setValue("filePath", chartFile.name);
+
+        setChartPreview(chartReader.result as string);
       };
       chartReader.onerror = (error) => {
         console.log("filereadingError: ", error);
       };
       chartReader.readAsDataURL(chartFile);
     } else {
-      setChart((prevChart) => ({
-        ...prevChart,
-        chartUpload: null,
-        filePath: "",
-      }));
+      setValue("chartUpload", null);
+      setValue("filePath", "");
       setChartPreview("");
     }
   };
 
   const handleAudioUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const audioFile = e.target.files[0];
+    // clear previous state
+    setValue("chartAudioUpload", null);
+    setValue("chartAudioFilePath", "");
+    setAudioPreview("");
+
+    const audioFile = e.target.files?.[0];
     if (audioFile) {
       const audioReader = new FileReader();
       audioReader.onload = () => {
-        setChart((prevChart) => ({
-          ...prevChart,
-          chartAudioUpload: audioFile,
-          chartAudioFilePath: audioFile.name,
-        }));
-        setAudioPreview(audioReader.result);
+        setValue("chartAudioUpload", audioFile);
+        setValue("chartAudioFilePath", audioFile.name);
+
+        setAudioPreview(audioReader.result as string);
       };
       audioReader.readAsDataURL(audioFile);
     } else {
-      setChart((prevChart) => ({
-        ...prevChart,
-        chartAudioUpload: null,
-        chartAudioFilePath: "",
-      }));
+      setValue("chartAudioUpload", null);
+      setValue("chartAudioFilePath", "");
       setAudioPreview("");
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    editData();
+  const handleRemoveFile = () => {
+    // Clear file input value and form state
+    setValue("chartUpload", null);
+    setValue("filePath", "");
+    setChartPreview("");
+
+    // Reset file input field (if needed)
+    const inputElement = document.getElementById(
+      "inputGroupFile01"
+    ) as HTMLInputElement;
+    if (inputElement) {
+      inputElement.value = "";
+    }
   };
 
-  const editData = async () => {
-    const formData = new FormData();
-    formData.append("id", id);
-    formData.append("filePath", chart.filePath);
-    formData.append("chordId", chart.chordId);
-    formData.append("fretPosition", chart.fretPosition);
-    formData.append("chartAudioFilePath", chart.chartAudioFilePath);
-    formData.append("positionDescription", chart.positionDescription);
-    if (chart.chartUpload) {
-      formData.append("chartUpload", chart.chartUpload);
-    } else {
-      formData.append("chartUpload", null);
+  const handleRemoveAudioFile = () => {
+    // Clear file input value and form state
+    setValue("chartAudioUpload", null);
+    setValue("chartAudioFilePath", "");
+    setAudioPreview("");
+
+    // Reset file input field (if needed)
+    const inputElement = document.getElementById(
+      "inputGroupFile02"
+    ) as HTMLInputElement;
+    if (inputElement) {
+      inputElement.value = "";
     }
-    if (chart.chartAudioUpload) {
-      formData.append("chartAudioUpload", chart.chartAudioUpload);
+  };
+
+  const onSubmit = async (data: ChartEditModel) => {
+    const formData = new FormData();
+
+    formData.append("id", id as string);
+    formData.append(
+      "chordId",
+      data.chordId !== null ? data.chordId.toString() : ""
+    );
+    formData.append("fretPosition", data.fretPosition.toString());
+
+    formData.append("positionDescription", data.positionDescription || "");
+    if (data.chartUpload) {
+      formData.append("filePath", data.chartUpload.name);
+      formData.append("chartUpload", data.chartUpload);
     } else {
-      formData.append("chartAudioUpload", null);
+      formData.append("filePath", data.filePath as string);
+      formData.append("chartUpload", "");
+    }
+    if (data.chartAudioUpload) {
+      formData.append("chartAudioFilePath", data.chartAudioUpload.name);
+      formData.append("chartAudioUpload", data.chartAudioUpload);
+    } else {
+      formData.append("chartAudioFilePath", data.chartAudioFilePath as string);
+      formData.append("chartAudioUpload", "");
     }
 
     console.log("Form Data Entries:");
     for (let pair of formData.entries()) {
       console.log(pair[0] + ": " + pair[1]);
     }
-    console.log(chart);
+    console.log(data);
     try {
-      const response = await axios.put(
-        `${Requests.editChordChart}${id}`,
+      const validatedId = idSchema.parse(id);
+
+      const response = await API.put(
+        apiEndpoints.editChordChart(validatedId),
         formData,
         {
           headers: {
@@ -196,16 +274,20 @@ const ChartEdit = () => {
           },
         }
       );
-      console.log(response);
+      console.log("🚀 ~ onSubmit ~ response:", response);
 
-      navigate("/admin/chordcharts", {
-        state: {
-          successMessage: `Chart  ${chart.filePath} Updated Successfully!`,
-        },
-      });
+      if (response && response.status === 200) {
+        const fileName = data.filePath && data.filePath.split("_").pop();
+        exit("/admin/chordcharts", {
+          state: {
+            successMessage: `chord chart ${fileName} edited successfully`,
+          },
+        });
+      }
     } catch (error) {
-      /* setErrorResult(error.response.data); */
-      console.error("Error editing Chart: ", error);
+      setError("root", {
+        message: `Unexpected Errror occured! Try Again!`,
+      });
     }
   };
 
@@ -213,98 +295,85 @@ const ChartEdit = () => {
     <div className="d-flex w-100 vh-100 justify-content-center align-items-start bg-light mt-3">
       <div className="w-50 border bg-white shadow px-5 pt-3 pd-5 rounded">
         <h3 className="mb-3">Edit chart</h3>
-        {errorResult && (
-          <p className="w-100 text-danger text-wrap">{errorResult}</p>
-        )}
         <div>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-2 d-flex justify-content-between">
               <label htmlFor="chord">Chord:</label>
-              <div
-                className="d-flex justify-content-between "
-                style={{ width: "75%" }}
-              >
-                <select
-                  className="form-select flex-fill me-3"
-                  onChange={(e) =>
-                    setChart({ ...chart, chordId: e.target.value })
-                  }
+              <div className="w-75 d-flex flex-column mb-2">
+                <div
+                  className="w-100 d-flex justify-content-between "
+                  style={{ width: "75%" }}
                 >
-                  <option value={chord.Id}>{chord.chordName}</option>
-                  {chordChange &&
-                    chordChange.map((chordNew, index) => (
-                      <option key={index} value={chordNew.id}>
-                        {chordNew.chordName}
-                      </option>
-                    ))}
-                </select>
-                <Link
-                  to="/admin/chords/create"
-                  className="btn btn-info flex-fill position-relative"
-                >
-                  Chord
-                  <RiAddCircleFill className="position-absolute top-50 start-0 translate-middle bg-info rounded-5" />
-                </Link>
+                  <select
+                    className="form-select flex-fill me-3"
+                    {...register("chordId", { setValueAs: (v) => parseInt(v) })}
+                  >
+                    <option value={chord?.id}>{chord?.chordName}</option>
+                    {chordChange &&
+                      chordChange.map((chordNew, index) => (
+                        <option key={index} value={chordNew.id}>
+                          {chordNew.chordName}
+                        </option>
+                      ))}
+                  </select>
+                  <Link
+                    to="/admin/chords/create"
+                    className="btn btn-info flex-fill position-relative"
+                  >
+                    Chord
+                    <RiAddCircleFill className="position-absolute top-50 start-0 translate-middle bg-info rounded-5" />
+                  </Link>
+                </div>
+                {errors.chordId && (
+                  <p className="text-danger text-sm">
+                    {errors.chordId.message}
+                  </p>
+                )}
               </div>
             </div>
+
             <div className="mb-2 d-flex justify-content-between">
               <label htmlFor="fret">Fret:</label>
-              <input
-                type="number"
-                name="fret"
-                className="form-contol "
-                value={chart.fretPosition}
-                style={{ width: "75%" }}
-                onChange={(e) =>
-                  setChart({ ...chart, fretPosition: e.target.value })
-                }
-              />
+              <div className="w-75 d-flex flex-column mb-2">
+                <input
+                  type="number"
+                  className="w-100 form-control"
+                  style={{ width: "75%" }}
+                  {...register("fretPosition", {
+                    setValueAs: (v) => parseInt(v),
+                  })}
+                />
+                {errors.fretPosition && (
+                  <p className="text-danger text-sm">
+                    {errors.fretPosition.message}
+                  </p>
+                )}
+              </div>
             </div>
+
             <div className="mb-2 d-flex justify-content-between">
               <label htmlFor="file">
                 <strong className="fs-5">File:</strong>
               </label>
-              <div className="w-75 d-flex flex-column">
-                <div className="input-group mb-2" style={{ width: "100%" }}>
+              <div className="w-75 d-flex flex-column mb-2">
+                <div className="w-100 input-group mb-2">
                   <input
                     type="file"
                     id="inputGroupFile01"
-                    className="form-contol flex-fill border btn btn-outline-light"
+                    className="form-control flex-fill border btn btn-outline-light"
                     accept="image/*"
                     onChange={handleChartUpload}
                   />
                 </div>
-                {chartPreview && (
-                  <div
-                    style={{
-                      position: "relative",
-                    }}
-                  >
-                    <img
-                      src={chartPreview}
-                      alt="chart preview"
-                      style={{
-                        maxWidth: "20em",
-                        maxHeight: "10em",
-                        objectFit: "contain",
-                      }}
-                    />
-                    <button
-                      onClick={() => setChartPreview("")}
-                      style={{ background: "transparent", border: "none" }}
-                    >
-                      <span
-                        style={{
-                          position: "absolute",
-                          top: "0",
-                          left: "0",
-                          fontSize: "1.2em",
-                        }}
-                      >
-                        <IoMdCloseCircleOutline />
-                      </span>
-                    </button>
-                  </div>
+                <ChartPreview
+                  chartPreview={chartPreview}
+                  handleRemoveFile={handleRemoveFile}
+                />
+
+                {errors.chartUpload && (
+                  <p className="text-danger text-sm">
+                    {errors.chartUpload.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -316,73 +385,67 @@ const ChartEdit = () => {
               <div className="d-flex flex-column" style={{ width: "75%" }}>
                 <input
                   type="file"
-                  name="audio"
-                  className="form-contol flex-fill border btn btn-outline-light m-2"
+                  className="form-control flex-fill border btn btn-outline-light m-2"
                   accept="audio/*"
                   onChange={handleAudioUpload}
                 />
-                {audioPreview && (
-                  <div
-                    style={{
-                      position: "relative",
-                    }}
-                  >
-                    <audio
-                      controls
-                      style={{
-                        maxWidth: "100%",
-                        maxHeight: "5em",
-                        objectFit: "contain",
-                      }}
-                      className="m3"
-                      onError={(error) =>
-                        console.error("Error playing audio: ", error)
-                      }
-                    >
-                      <source src={audioPreview} />
-                      Your Browser does not support this audio
-                    </audio>
-                    <button
-                      onClick={() => setAudioPreview("")}
-                      style={{ background: "transparent", border: "none" }}
-                    >
-                      <span
-                        style={{
-                          position: "absolute",
-                          top: "0",
-                          right: "0",
-                          fontSize: "1.2em",
-                        }}
-                      >
-                        <IoMdCloseCircleOutline />
-                      </span>
-                    </button>
-                  </div>
+                <AudioPreview
+                  handleRemoveAudioFile={handleRemoveAudioFile}
+                  audioPreview={audioPreview}
+                />
+                {errors.chartAudioUpload && (
+                  <p className="text-danger text-sm">
+                    {errors.chartAudioUpload.message}
+                  </p>
                 )}
               </div>
             </div>
+
             <div className="mb-3 d-flex justify-content-between">
               <label htmlFor="description">Description:</label>
-              <textarea
-                type="text"
-                name="description"
-                value={chart.positionDescription}
-                className="form-contol overflow-scroll"
-                placeholder="Describe here..."
-                style={{ width: "75%" }}
-                onChange={(e) =>
-                  setChart({ ...chart, positionDescription: e.target.value })
-                }
-              ></textarea>
+              <div className="w-75 d-flex flex-column ">
+                <textarea
+                  className="w-100 form-control overflow-scroll"
+                  placeholder="Describe here..."
+                  {...register("positionDescription")}
+                ></textarea>
+                {errors.positionDescription && (
+                  <p className="text-danger text-sm">
+                    {errors.positionDescription.message}
+                  </p>
+                )}
+              </div>
             </div>
+            <pre>
+              {JSON.stringify(
+                watch(),
+                (key, value) => {
+                  if (value instanceof File) {
+                    return value.type;
+                  }
+                  return value;
+                },
+                2
+              )}
+            </pre>
             <div className="d-flex justify-content-end ms-2 mb-3">
-              <Link to="/admin/chordcharts" className="btn btn-danger me-3">
+              <Link
+                to="/admin/chordcharts"
+                className="btn btn-outline-danger me-3"
+              >
                 Cancel
               </Link>
-              <button type="submit" className="btn btn-primary ">
+              <button
+                type="submit"
+                className="btn btn-outline-primary "
+                disabled={isSubmitting}
+              >
                 Edit
               </button>
             </div>
+            {errors.root && (
+              <p className="text-danger text-sm">{errors.root.message}</p>
+            )}
           </form>
         </div>
       </div>

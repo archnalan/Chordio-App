@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { BookRequests } from "./Requests";
+
 import { IoSearchOutline } from "react-icons/io5";
 import { RiStickyNoteAddFill } from "react-icons/ri";
 import { FiEdit, FiList, FiTrash2 } from "react-icons/fi";
@@ -9,19 +9,23 @@ import {
   HymnBookModel,
   HymnBookSchema,
 } from "../../../DataModels/HymnBookModel";
+import Pagination from "../../Helper/Pagination";
+import { idSchema } from "../../../DataModels/ValidateID";
+import BookRequest from "../../../API/BookRequest";
 
-const HymnBook: React.FC = () => {
-  const [hymnBooks, setHymnBooks] = useState<HymnBookModel[]>([]);
+const SongBook: React.FC = () => {
+  const [songBooks, setSongBooks] = useState<HymnBookModel[]>([]);
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [bookSearch, setBookSearch] = useState<HymnBookModel[]>([]);
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const [songsPerPage] = useState(6);
   const navigate = useNavigate();
   const location = useLocation();
-  const [bookSearch, setBookSearch] = useState<HymnBookModel[]>([]);
 
   useEffect(() => {
-    const getHymnBooks = async () => {
+    const getSongBooks = async () => {
       try {
-        const response = await axios.get(BookRequests.fetchAllHymnBooks);
-        console.log("🚀 ~ getHymnBooks ~ response:", response);
+        const response = await BookRequest.fetchAllSongBooks();
 
         const validatedBooks = HymnBookSchema.array().safeParse(
           response.data.$values
@@ -29,19 +33,19 @@ const HymnBook: React.FC = () => {
 
         if (!validatedBooks.success) {
           console.error(
-            "🚀 ~ getHymnBooks ~ validatedBooks:",
+            "🚀 ~ getSongBooks ~ validatedBooks:",
             validatedBooks.error.issues
           );
           return;
         }
 
-        setHymnBooks(validatedBooks.data);
+        setSongBooks(validatedBooks.data);
         setBookSearch(validatedBooks.data);
       } catch (error) {
         console.error("Error fetching Books: ", error);
       }
     };
-    getHymnBooks();
+    getSongBooks();
   }, []);
 
   useEffect(() => {
@@ -64,22 +68,21 @@ const HymnBook: React.FC = () => {
 
   const handleDelete = (book: string, id: number) => {
     const confirm = window.confirm(
-      `Would you like to delete hymn book ${book}`
+      `Would you like to delete Song book ${book}`
     );
     if (confirm) {
-      deleteHymnBook(id);
+      deleteSongBook(id);
     }
   };
-  const deleteHymnBook = async (id: number) => {
+  const deleteSongBook = async (id: number) => {
     try {
-      const response = await axios.delete(
-        `${BookRequests.deleteHymnBook}${id}`
-      );
-      console.log("🚀 ~ deleteHymnBook ~ response:", response);
+      const validatedId = idSchema.parse(id);
+      const response = await BookRequest.deleteSongBook(validatedId);
+      console.log("🚀 ~ deleteSongBook ~ response:", response);
 
       window.location.reload();
     } catch (error) {
-      console.log("🚀 ~ deleteHymnBook ~ error:", error);
+      console.log("🚀 ~ deleteSongBook ~ error:", error);
     }
   };
 
@@ -87,7 +90,7 @@ const HymnBook: React.FC = () => {
     const searchQuery = e.target.value.toLowerCase();
 
     if (searchQuery !== "") {
-      const results = hymnBooks.filter(
+      const results = songBooks.filter(
         (bk) =>
           bk.title.toLowerCase().includes(searchQuery) ||
           bk.publisher.toLowerCase().includes(searchQuery) ||
@@ -96,13 +99,20 @@ const HymnBook: React.FC = () => {
       console.log("🚀 ~ handleSearch ~ results:", results);
       setBookSearch(results);
     } else {
-      setBookSearch(hymnBooks);
+      setBookSearch(songBooks);
     }
   };
 
+  const handlePageChange = (selected: number) => {
+    setCurrentPageIndex(selected);
+  };
+  const pageCount = Math.ceil(bookSearch.length / songsPerPage);
+  const offset = currentPageIndex * songsPerPage;
+  const currentBooks = bookSearch.slice(offset, offset + songsPerPage);
+
   return (
     <div className="d-flex flex-column justify-content-start align-items-center bg-light m-3 vh-100">
-      <h1>List of Books</h1>
+      <h1>Music Collection</h1>
       {successMessage && (
         <div className="w-75 alert alert-success text-wrap" role="alert">
           {successMessage}
@@ -114,14 +124,14 @@ const HymnBook: React.FC = () => {
             <input
               type="text"
               className="form-control ps-5 rounded"
-              placeholder="search a hymn..."
+              placeholder="Find a collection..."
               onChange={handleSearch}
             />
             <button className="btn btn-outline position-absolute ">
               <IoSearchOutline />
             </button>
           </div>
-          <Link to="/admin/hymnbooks/create" className="btn btn-success">
+          <Link to="/admin/songbooks/create" className="btn btn-success">
             <RiStickyNoteAddFill />
           </Link>
         </div>
@@ -136,7 +146,7 @@ const HymnBook: React.FC = () => {
               </tr>
             </thead>
             <tbody className="table-group-divider">
-              {bookSearch.map((book) => (
+              {currentBooks.map((book) => (
                 <tr key={book.id}>
                   <td>{book.title}</td>
                   <td>{book.publisher}</td>
@@ -167,9 +177,12 @@ const HymnBook: React.FC = () => {
             </tbody>
           </table>
         </div>
+        <div className="Page navigation">
+          <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
+        </div>
       </div>
     </div>
   );
 };
 
-export default HymnBook;
+export default SongBook;
