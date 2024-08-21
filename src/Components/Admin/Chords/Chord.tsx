@@ -9,19 +9,18 @@ import Pagination from "../../Helper/Pagination";
 import { IoSearchOutline } from "react-icons/io5";
 
 import ChordRequest from "../../../API/ChordRequest";
-import {
-  ChordWithChartsModel,
-  ChordWithChartsSchema,
-  ChordsModel,
-  ChordsSchema,
-} from "../../../DataModels/ChordModel";
+import { ChordModel, ChordSchema } from "../../../DataModels/ChordModel";
+import { ChartModel, ChartSchema } from "../../../DataModels/ChartModel";
+import ChartRequest from "../../../API/ChartRequest";
+import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 
 const Chord: React.FC = () => {
-  const [chords, setChords] = useState<ChordsModel[]>([]);
-  const [filteredChords, setfilteredChords] = useState<ChordsModel[]>([]);
+  const [chords, setChords] = useState<ChordModel[]>([]);
+  const [charts, setCharts] = useState<ChartModel[]>([]);
+  const [filteredChords, setfilteredChords] = useState<ChordModel[]>([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const [chordsPerPage] = useState(8);
+  const [chordsPerPage] = useState(4);
   const location = useLocation();
 
   useEffect(() => {
@@ -39,7 +38,7 @@ const Chord: React.FC = () => {
       try {
         const response = await ChordRequest.fetchChordsWithCharts();
 
-        const validateChords = ChordWithChartsSchema.array().safeParse(
+        const validateChords = ChordSchema.array().safeParse(
           response.data.$values
         );
         if (!validateChords.success) {
@@ -56,6 +55,29 @@ const Chord: React.FC = () => {
       }
     };
     FetchChords();
+  }, []);
+
+  useEffect(() => {
+    const FetchCharts = async () => {
+      try {
+        const response = await ChartRequest.fetchAllChordCharts();
+
+        const validateCharts = ChartSchema.array().safeParse(
+          response.data.$values
+        );
+        if (!validateCharts.success) {
+          console.error(
+            "🚀 ~ FetchData ~ validateCharts.success:",
+            validateCharts.error.issues
+          );
+          return;
+        }
+        setCharts(validateCharts.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    FetchCharts();
   }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,28 +150,75 @@ const Chord: React.FC = () => {
                 <IoSearchOutline />
               </button>
             </div>
-            <Link
-              to="/admin/chords/create"
-              className="btn btn-success mb-4"
-              /* data-bs-container="body"
-              data-bs-toggle="popover"
-              data-bs-placement="left"
-              data-bs-trigger="hover-focus"
-              data-bs-content="Add Chord." */
-            >
+            <Link to="/admin/chords/create" className="btn btn-success mb-4">
               <RiStickyNoteAddFill />
             </Link>
           </div>
-          <div className="container d-flex ">
+          <div className="container d-flex over-flow-hidden">
             <div className="row row-cols-4 ">
               {currentChords.map((chord, index) => (
-                <div className="col mb-4" key={index}>
+                <div className="col mb-4 d-flex flex-column" key={index}>
                   <div className="card ">
-                    <img
-                      src={chord.charts}
-                      alt={chord.chordName}
-                      className="w-100 card-img-top  img-thumbnail mt-2"
-                    />
+                    <div
+                      id={`carouselCharts-${index}`}
+                      className="carousel slide"
+                    >
+                      <div className="carousel-inner">
+                        {charts
+                          .filter((chart) => chart.chordId === chord.id)
+                          .map((chart, chartIndex) => (
+                            <div
+                              key={chart.id}
+                              className={`carousel-item ${
+                                chartIndex === 0 ? "active" : ""
+                              }`}
+                            >
+                              <img
+                                src={chart.filePath}
+                                alt={chord.chordName}
+                                className="d-block w-100 card-img-top  img-thumbnail mt-2 mb-2"
+                              />
+                              <h6 className="d-block text-center text-secondary ">
+                                Fret {chart.fretPosition}
+                              </h6>
+                            </div>
+                          ))}
+                      </div>
+
+                      <div>
+                        <button
+                          className="carousel-control-prev text-dark"
+                          type="button"
+                          data-bs-target={`#carouselCharts-${index}`}
+                          data-bs-slide="prev"
+                        >
+                          <MdOutlineNavigateBefore size={24} />
+                          <span className="visually-hidden">Previous</span>
+                        </button>
+                        <button
+                          className="carousel-control-next text-dark"
+                          type="button"
+                          data-bs-target={`#carouselCharts-${index}`}
+                          data-bs-slide="next"
+                        >
+                          <MdOutlineNavigateNext size={24} />
+                          <span className="visually-hidden">Next</span>
+                        </button>
+                        <button
+                          className="carousel-control-next"
+                          type="button"
+                          data-bs-target={`#carouselCharts-${index}`}
+                          data-bs-slide="next"
+                        >
+                          <span
+                            className="carousel-control-next-icon"
+                            aria-hidden="true"
+                          ></span>
+                          <span className="visually-hidden">Next</span>
+                        </button>
+                      </div>
+                    </div>
+
                     <div className="card-body">
                       <h5 className="card-title">Chord {chord.chordName}</h5>
                     </div>

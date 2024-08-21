@@ -129,11 +129,6 @@ const ChordChart: React.FC = () => {
             <Link
               to="/admin/chordcharts/create"
               className="btn btn-success mb-4"
-              /* data-bs-container="body"
-              data-bs-toggle="popover"
-              data-bs-placement="left"
-              data-bs-trigger="hover-focus"
-              data-bs-content="Add Chart." */
             >
               <RiStickyNoteAddFill />
             </Link>
