@@ -1,0 +1,16 @@
+/*Hiding default white icons*/
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  display: none;
+}
+
+.chord-card {
+  position: relative;
+  z-index: 2;
+  
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  z-index: 1;
+}
