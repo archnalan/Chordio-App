@@ -133,7 +133,7 @@ const ChordEdit: React.FC<ChordEditType> = ({
               )}
             </div>
 
-            <pre>{JSON.stringify(watch(), null, 2)}</pre>
+            {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
             <div className="d-flex justify-content-end ms-2 mb-3">
               <button
                 className="btn btn-danger me-4"

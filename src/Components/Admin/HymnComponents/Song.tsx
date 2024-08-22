@@ -115,8 +115,8 @@ const Song: React.FC = () => {
   const currentSongs = filteredSongs.slice(offset, offset + songsPerPage);
 
   return (
-    <div className="w-100 vh-100 position-fixed overflow-y-scroll bg-light ">
-      <div className="d-flex flex-column justify-content-start align-items-center bg-light vh-100">
+    <div className="w-100 vh-100 position-relative overflow-y-scroll bg-light ">
+      <div className="w-100 d-flex flex-column justify-content-start align-items-center  bg-light vh-100">
         <h1 className="m-3">List of Songs</h1>
         {successMessage && (
           <div className="w-75 alert alert-success text-wrap" role="alert">
