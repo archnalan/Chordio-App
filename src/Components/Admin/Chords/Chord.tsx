@@ -6,17 +6,24 @@ import { RiStickyNoteAddFill } from "react-icons/ri";
 import Pagination from "../../Helper/Pagination";
 import { IoSearchOutline } from "react-icons/io5";
 import ChordRequest from "../../../API/ChordRequest";
-import { ChordModel, ChordSchema } from "../../../DataModels/ChordModel";
+import {
+  ChordEditModel,
+  ChordModel,
+  ChordSchema,
+} from "../../../DataModels/ChordModel";
 import { ChartModel, ChartSchema } from "../../../DataModels/ChartModel";
 import ChartRequest from "../../../API/ChartRequest";
 import ChordCreate from "./ChordCreate";
 import ChordCard from "./ChordCard";
+import ChordEdit from "./ChordEdit";
 
 const Chord: React.FC = () => {
   const [chords, setChords] = useState<ChordModel[]>([]);
   const [charts, setCharts] = useState<ChartModel[]>([]);
   const [filteredChords, setfilteredChords] = useState<ChordModel[]>([]);
   const [openChordCreate, setOpenChordCreate] = useState(false);
+  const [openChordEdit, setOpenChordEdit] = useState(false);
+  const [chord, setChord] = useState<ChordEditModel>();
   const [successMessage, setSuccessMessage] = useState("");
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [chordsPerPage] = useState(4);
@@ -102,6 +109,24 @@ const Chord: React.FC = () => {
     }
   };
 
+  const fetchChord = async (id: number) => {
+    console.log("🚀 ~ fetchChord ~ id:", id);
+    try {
+      const response = await ChordRequest.fetchChordById(id);
+      console.log("🚀 ~ fetchChord ~ response:", response);
+
+      if (response.data) {
+        setChord(response.data);
+      }
+    } catch (error) {
+      console.error("🚀 ~ fetchChord ~ error:", error);
+    }
+  };
+
+  const handleReload = () => {
+    window.location.reload();
+  };
+
   const handlePageChange = (selectedPage: number) => {
     setCurrentPageIndex(selectedPage);
   };
@@ -148,12 +173,24 @@ const Chord: React.FC = () => {
               </div>
             </div>
 
-            <ChordCard charts={charts} currentChords={currentChords} />
+            <ChordCard
+              charts={charts}
+              fetchChord={fetchChord}
+              currentChords={currentChords}
+              setOpenChordEdit={setOpenChordEdit}
+            />
 
             <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
           </div>
           {openChordCreate && (
             <ChordCreate setOpenChordCreate={setOpenChordCreate} />
+          )}
+          {openChordEdit && chord && (
+            <ChordEdit
+              chordToEdit={chord}
+              onClose={handleReload}
+              setOpenChordEdit={setOpenChordEdit}
+            />
           )}
         </div>
       </div>

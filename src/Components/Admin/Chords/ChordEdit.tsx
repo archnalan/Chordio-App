@@ -1,53 +1,72 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ChordRequest from "../../../API/ChordRequest";
 import {
-  ChordCreateModel,
-  ChordCreateSchema,
+  ChordEditModel,
+  ChordEditSchema,
 } from "../../../DataModels/ChordModel";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import "./ChordCreate.css";
 import { AxiosError } from "axios";
 
-type ChordCreateType = {
-  setOpenChordCreate: React.Dispatch<React.SetStateAction<boolean>>;
+type ChordEditType = {
+  chordToEdit: ChordEditModel;
+  onClose: () => void;
+  setOpenChordEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
-const ChordCreate: React.FC<ChordCreateType> = ({ setOpenChordCreate }) => {
+const ChordEdit: React.FC<ChordEditType> = ({
+  onClose,
+  chordToEdit,
+  setOpenChordEdit,
+}) => {
   const {
     register,
     trigger,
-    /* watch, */
+    watch,
     setError,
     reset,
     setValue,
     formState: { errors, isSubmitting },
     handleSubmit,
-  } = useForm<ChordCreateModel>({
+  } = useForm<ChordEditModel>({
     mode: "all",
-    defaultValues: {
-      difficulty: 1,
-      chartAudioFilePath: "",
-      chartAudioUpload: null,
-      chordDifficulty: 1,
-    },
-    resolver: zodResolver(ChordCreateSchema),
+    resolver: zodResolver(ChordEditSchema),
   });
 
   const [isSuccess, setIsSuccess] = useState("");
 
-  const onSubmit = async (data: ChordCreateModel) => {
+  useEffect(() => {
+    reset({
+      id: chordToEdit.id,
+      chordName: chordToEdit.chordName,
+      difficulty: chordToEdit.difficulty,
+      chartAudioUpload: chordToEdit.chartAudioUpload,
+      chartAudioFilePath: chordToEdit.chartAudioFilePath,
+    });
+    setIsSuccess("");
+  }, [chordToEdit]);
+
+  const onSubmit = async (data: ChordEditModel) => {
     console.log("🚀 ~ onSubmit ~ data:", data);
 
     try {
-      const response = await ChordRequest.createChord(data);
+      const response = await ChordRequest.editChord(chordToEdit.id, data);
       console.log("🚀 ~ onSubmit ~ response:", response);
 
-      if (response && response.status === 201) {
-        reset();
-        setIsSuccess(`Chord ${data.chordName} created successfully!`);
+      if (response && response.status === 200) {
+        reset({
+          id: chordToEdit.id,
+          chordName: "",
+          difficulty: chordToEdit.difficulty,
+          chartAudioUpload: chordToEdit.chartAudioUpload,
+          chartAudioFilePath: chordToEdit.chartAudioFilePath,
+        });
+        setIsSuccess(
+          `Chord ${chordToEdit.chordName} updated to ${data.chordName} successfully!`
+        );
       }
     } catch (error) {
-      const axiosError = error as AxiosError<ChordCreateModel>;
+      const axiosError = error as AxiosError<ChordEditModel>;
       console.log("🚀 ~ onSubmit ~ error:", axiosError.response?.data);
 
       if (axiosError.response && axiosError.response.data) {
@@ -74,11 +93,15 @@ const ChordCreate: React.FC<ChordCreateType> = ({ setOpenChordCreate }) => {
       <div className="w-50 position-relative border bg-white shadow px-5 pt-3 pd-5 rounded">
         <div
           className="position-absolute btn border-0 top-0 end-0"
-          onClick={() => setOpenChordCreate(false)}
+          onClick={() => {
+            setOpenChordEdit(false);
+            setValue("chordName", "");
+            onClose();
+          }}
         >
           <span className="fs-1 text-danger">&times;</span>
         </div>
-        <h1 className="mt-4 mb-4">Create a chord</h1>
+        <h1 className="mt-4 mb-4">Edit a chord</h1>
 
         {isSuccess && (
           <div
@@ -110,12 +133,16 @@ const ChordCreate: React.FC<ChordCreateType> = ({ setOpenChordCreate }) => {
               )}
             </div>
 
-            {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
+            <pre>{JSON.stringify(watch(), null, 2)}</pre>
             <div className="d-flex justify-content-end ms-2 mb-3">
               <button
                 className="btn btn-danger me-4"
                 disabled={isSubmitting}
-                onClick={() => setOpenChordCreate(false)}
+                onClick={() => {
+                  setOpenChordEdit(false);
+                  setValue("chordName", "");
+                  onClose();
+                }}
               >
                 Cancel
               </button>
@@ -125,7 +152,7 @@ const ChordCreate: React.FC<ChordCreateType> = ({ setOpenChordCreate }) => {
                 className="btn btn-primary "
                 disabled={isSubmitting}
               >
-                Create
+                Edit
               </button>
             </div>
             {errors.root && (
@@ -138,4 +165,4 @@ const ChordCreate: React.FC<ChordCreateType> = ({ setOpenChordCreate }) => {
   );
 };
 
-export default ChordCreate;
+export default ChordEdit;

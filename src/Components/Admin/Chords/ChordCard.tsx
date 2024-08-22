@@ -10,8 +10,15 @@ import "./ChordCard.css";
 type ChordCardType = {
   charts: ChartModel[];
   currentChords: ChordModel[];
+  fetchChord: (id: number) => Promise<void>;
+  setOpenChordEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
-const ChordCard: React.FC<ChordCardType> = ({ charts, currentChords }) => {
+const ChordCard: React.FC<ChordCardType> = ({
+  charts,
+  fetchChord,
+  currentChords,
+  setOpenChordEdit,
+}) => {
   const handleDelete = (id: number) => {
     const confirm = window.confirm("Would you like to delete chord?");
     if (confirm) {
@@ -104,12 +111,17 @@ const ChordCard: React.FC<ChordCardType> = ({ charts, currentChords }) => {
                   <Link to={`${chord.id}`} className="btn btn-sm btn-info me-2">
                     <FiList />
                   </Link>
-                  <Link
-                    to={`edit/${chord.id}`}
+
+                  <button
                     className="btn btn-sm btn-primary me-2"
+                    onClick={() => {
+                      setOpenChordEdit(true);
+                      fetchChord(chord.id);
+                    }}
                   >
                     <FiEdit />
-                  </Link>
+                  </button>
+
                   <button
                     className="btn btn-sm btn-danger"
                     onClick={() => handleDelete(chord.id)}
