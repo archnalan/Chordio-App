@@ -32,7 +32,7 @@ Chordio is a guitarist's dream tool that provides a userfriendly interface for c
 
 <img src="/UI_screenshots/chord charts.JPG" alt="createPage" width="500"/>
 
-3. Unlike Chord charts that appear as cards, items such as pages, songs, categories appear in tabular form as below. Beside the list are action buttons that allow you to view details, edit and or delete the item from the list.
+3. Unlike Chord charts that appear as cards, items such as pages, songs, categories appear in tabular form as below. Beside each list item are action buttons that allow you to view details, edit and or delete the item from the list.
 
 <img src="/UI_screenshots/category list.JPG" alt="createPage" width="500"/>
 
