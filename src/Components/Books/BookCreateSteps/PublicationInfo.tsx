@@ -1,6 +1,6 @@
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { HymnBookCreateModel } from "../../../../DataModels/HymnBookModel";
+import { HymnBookCreateModel } from "../../../DataModels/HymnBookModel";
 import BookHeader from "./BookHeader";
 import { DatePicker } from "antd";
 import { useNavigate } from "react-router-dom";

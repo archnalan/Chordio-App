@@ -20,6 +20,9 @@ import NavBar from "../User/NavBar/NavBar";
 import Page from "../Admin/Pages/Page";
 import Side from "../Admin/SideBar/Side";
 import "./AdminLayout.css";
+import ChordDetails from "../Admin/Chords/ChordDetails";
+import SongBook from "../Books/SongBook";
+import BookBasicInfo from "../Books/BookCreateSteps/BookBasicInfo";
 
 const AdminRoutes: React.FC = () => {
   return (
@@ -48,6 +51,11 @@ const AdminRoutes: React.FC = () => {
                   path="/admin/pages/edit/:id"
                   element={<PageEdit />}
                 ></Route>
+                <Route path="/admin/songbooks" element={<SongBook />}></Route>
+                {/* <Route
+                  path="/admin/songbooks/create"
+                  element={<BookBasicInfo />}
+                ></Route> */}
                 {/* <Route path="/" element={<SectionInput />}></Route> */}
                 <Route path="/admin/songs" element={<Song />}></Route>
                 <Route
@@ -77,6 +85,10 @@ const AdminRoutes: React.FC = () => {
                 ></Route>
 
                 <Route path="/admin/chords" element={<Chord />}></Route>
+                <Route
+                  path="/admin/chords/:id"
+                  element={<ChordDetails />}
+                ></Route>
                 <Route
                   path="/admin/chordcharts"
                   element={<ChordChart />}

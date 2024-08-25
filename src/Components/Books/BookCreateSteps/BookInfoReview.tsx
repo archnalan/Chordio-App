@@ -1,7 +1,7 @@
 import React from "react";
 import { SubmitHandler, useFormContext } from "react-hook-form";
 import BookHeader from "./BookHeader";
-import { HymnBookCreateModel } from "../../../../DataModels/HymnBookModel";
+import { HymnBookCreateModel } from "../../../DataModels/HymnBookModel";
 import { useNavigate } from "react-router-dom";
 
 type reviewProps = {

@@ -85,7 +85,7 @@ const Page: React.FC = () => {
   const currentPages = filteredPages.slice(offset, offset + pagesPerPage);
 
   return (
-    <div className="w-100 vh-100 position-fixed overflow-y-scroll bg-light ">
+    <div className="w-100 vh-100  overflow-y-scroll bg-light position-relative ">
       <div className="d-flex flex-column justify-content-start align-items-center bg-light vh-100">
         <h1 className="m-3">List of Pages</h1>
         {errorDelete && (

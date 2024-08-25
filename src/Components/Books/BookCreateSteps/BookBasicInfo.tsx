@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import { HymnBookCreateModel } from "../../../../DataModels/HymnBookModel";
+import { HymnBookCreateModel } from "../../../DataModels/HymnBookModel";
 import { useNavigate } from "react-router-dom";
 import BookHeader from "./BookHeader";
 

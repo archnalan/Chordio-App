@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { idSchema } from "../../../DataModels/ValidateID";
-import {
-  HymnBookModel,
-  HymnBookSchema,
-} from "../../../DataModels/HymnBookModel";
-import BookRequest from "../../../API/BookRequest";
+import { idSchema } from "../../DataModels/ValidateID";
+import { HymnBookModel, HymnBookSchema } from "../../DataModels/HymnBookModel";
+import BookRequest from "../../API/BookRequest";
 import { format } from "date-fns";
 
 const BookDetails: React.FC = () => {

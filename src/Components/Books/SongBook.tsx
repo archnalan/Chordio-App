@@ -5,13 +5,10 @@ import { IoSearchOutline } from "react-icons/io5";
 import { RiStickyNoteAddFill } from "react-icons/ri";
 import { FiEdit, FiList, FiTrash2 } from "react-icons/fi";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import {
-  HymnBookModel,
-  HymnBookSchema,
-} from "../../../DataModels/HymnBookModel";
-import Pagination from "../../Helper/Pagination";
-import { idSchema } from "../../../DataModels/ValidateID";
-import BookRequest from "../../../API/BookRequest";
+import { HymnBookModel, HymnBookSchema } from "../../DataModels/HymnBookModel";
+import Pagination from "../Helper/Pagination";
+import { idSchema } from "../../DataModels/ValidateID";
+import BookRequest from "../../API/BookRequest";
 
 const SongBook: React.FC = () => {
   const [songBooks, setSongBooks] = useState<HymnBookModel[]>([]);

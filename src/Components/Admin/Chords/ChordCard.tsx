@@ -11,31 +11,18 @@ type ChordCardType = {
   charts: ChartModel[];
   currentChords: ChordModel[];
   fetchChord: (id: number) => Promise<void>;
+  setToDelete: (chart: ChordModel) => void;
+  setOpenConfirm: React.Dispatch<SetStateAction<boolean>>;
   setOpenChordEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const ChordCard: React.FC<ChordCardType> = ({
   charts,
   fetchChord,
   currentChords,
+  setToDelete,
+  setOpenConfirm,
   setOpenChordEdit,
 }) => {
-  const handleDelete = (id: number) => {
-    const confirm = window.confirm("Would you like to delete chord?");
-    if (confirm) {
-      const DeleteData = async () => {
-        try {
-          const response = ChordRequest.deleteChord(id);
-          console.log(response);
-
-          window.location.reload();
-        } catch (error) {
-          console.error("Error deleting chord", error);
-        }
-      };
-      DeleteData();
-    }
-  };
-
   return (
     <div className="container d-flex chord-card">
       <div className="row row-cols-4 ">
@@ -124,7 +111,10 @@ const ChordCard: React.FC<ChordCardType> = ({
 
                   <button
                     className="btn btn-sm btn-danger"
-                    onClick={() => handleDelete(chord.id)}
+                    onClick={() => {
+                      setOpenConfirm(true);
+                      setToDelete(chord);
+                    }}
                   >
                     <FiTrash2 />
                   </button>

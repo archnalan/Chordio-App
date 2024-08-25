@@ -16,6 +16,7 @@ import ChartRequest from "../../../API/ChartRequest";
 import ChordCreate from "./ChordCreate";
 import ChordCard from "./ChordCard";
 import ChordEdit from "./ChordEdit";
+import ChordDelete from "./ChordDelete";
 
 const Chord: React.FC = () => {
   const [chords, setChords] = useState<ChordModel[]>([]);
@@ -23,7 +24,10 @@ const Chord: React.FC = () => {
   const [filteredChords, setfilteredChords] = useState<ChordModel[]>([]);
   const [openChordCreate, setOpenChordCreate] = useState(false);
   const [openChordEdit, setOpenChordEdit] = useState(false);
+  const [openConfirm, setOpenConfirm] = useState(false);
   const [chord, setChord] = useState<ChordEditModel>();
+  const [toDelete, setToDelete] = useState<ChordModel>();
+  const [errorDelete, setErrorDelete] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
   const [chordsPerPage] = useState(4);
@@ -127,6 +131,22 @@ const Chord: React.FC = () => {
     window.location.reload();
   };
 
+  const handleDelete = (chord: ChordModel) => {
+    const DeleteData = async () => {
+      try {
+        const response = ChordRequest.deleteChord(chord.id);
+        console.log("🚀 ~ DeleteData ~ response:", response);
+
+        window.location.reload();
+      } catch (error) {
+        console.error("Error deleting chord", error);
+        setOpenConfirm(false);
+        setErrorDelete(`${chord.chordName} could not be deleted. Try Again!`);
+      }
+    };
+    DeleteData();
+  };
+
   const handlePageChange = (selectedPage: number) => {
     setCurrentPageIndex(selectedPage);
   };
@@ -137,14 +157,19 @@ const Chord: React.FC = () => {
 
   return (
     <>
-      <div className="w-100 vh-100 overflow-y-scroll bg-light ">
-        <div className="d-flex flex-column justify-content-start align-items-center bg-light vh-100">
+      <div className="w-100 vh-100 overflow-y-scroll position-relative bg-light">
+        <div className="d-flex flex-column justify-content-start align-items-center position-fixed bg-light vh-100">
           <h1>List of Chords</h1>
           {/* {successMessage && (
           <div className="w-75 alert alert-success text-wrap" role="alert">
             {successMessage}
           </div>
         )} */}
+          {errorDelete && (
+            <div className="w-75 alert alert-danger text-wrap" role="alert">
+              {errorDelete}
+            </div>
+          )}
           <div className="w-75 border-shadow p-3 ">
             <div className="d-flex justify-content-between mb-4">
               <div className="d-flex w-25 justify-content-start align-items-center position-relative me-5">
@@ -178,6 +203,8 @@ const Chord: React.FC = () => {
               fetchChord={fetchChord}
               currentChords={currentChords}
               setOpenChordEdit={setOpenChordEdit}
+              setOpenConfirm={setOpenConfirm}
+              setToDelete={setToDelete}
             />
 
             <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
@@ -190,6 +217,13 @@ const Chord: React.FC = () => {
               chordToEdit={chord}
               onClose={handleReload}
               setOpenChordEdit={setOpenChordEdit}
+            />
+          )}
+          {openConfirm && toDelete && (
+            <ChordDelete
+              toDelete={toDelete}
+              setOpenConfirm={setOpenConfirm}
+              handleDelete={handleDelete}
             />
           )}
         </div>

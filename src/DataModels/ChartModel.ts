@@ -38,3 +38,4 @@ export const ChartsSchema = z.object({
 });
 
 export type ChartsModel = z.infer<typeof ChartsSchema>;
+

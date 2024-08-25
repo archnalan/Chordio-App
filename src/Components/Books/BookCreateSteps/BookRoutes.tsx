@@ -9,7 +9,7 @@ import BookInfoReview from "./BookInfoReview";
 import {
   BookCreateSchema,
   HymnBookCreateModel,
-} from "../../../../DataModels/HymnBookModel";
+} from "../../../DataModels/HymnBookModel";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 const BookRoutes: React.FC = () => {

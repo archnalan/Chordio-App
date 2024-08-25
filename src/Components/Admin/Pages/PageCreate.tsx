@@ -7,6 +7,7 @@ import {
 } from "../../../DataModels/PageModel";
 import PageSuccess from "./PageSuccess";
 import PageRequest from "../../../API/PageRequest";
+import { Link } from "react-router-dom";
 
 const PageCreate: React.FC = () => {
   const {
@@ -37,7 +38,7 @@ const PageCreate: React.FC = () => {
   };
 
   return (
-    <div className="d-flex w-100 vh-100 justify-content-center align-items-start bg-light ">
+    <div className="d-flex w-100 vh-100 justify-content-center align-items-center bg-light ">
       <div className="w-50 border bg-white shadow px-5 pt-3 pd-5 rounded mt-3">
         <h1 className="mb-3">Create a Page</h1>
         <div>
@@ -77,14 +78,13 @@ const PageCreate: React.FC = () => {
               </div>
             </div>
 
-            <pre>{JSON.stringify(watch(), null, 2)}</pre>
+            {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
             <div className="d-flex justify-content-end mb-5">
-              <button
-                className="btn btn-sm btn-danger p-2 me-2"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
+              <Link to="/admin/pages">
+                <button className="btn btn-sm btn-danger p-2 me-2">
+                  Cancel
+                </button>
+              </Link>
               <button
                 type="submit"
                 className="btn btn-sm btn-primary p-2"

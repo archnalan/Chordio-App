@@ -6,7 +6,7 @@ import {
 } from "../../../DataModels/ChordModel";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import "./ChordCreate.css";
+import "./ChordEdit.css";
 import { AxiosError } from "axios";
 
 type ChordEditType = {
@@ -89,14 +89,13 @@ const ChordEdit: React.FC<ChordEditType> = ({
   };
 
   return (
-    <div className="w-100 vh-100 d-flex justify-content-center align-items-center position-fixed bg-dark bg-opacity-50 z-100 chord-create">
+    <div className="w-100 vh-100 d-flex justify-content-center align-items-center position-fixed bg-dark bg-opacity-50 z-100 chord-edit">
       <div className="w-50 position-relative border bg-white shadow px-5 pt-3 pd-5 rounded">
         <div
           className="position-absolute btn border-0 top-0 end-0"
           onClick={() => {
             setOpenChordEdit(false);
             setValue("chordName", "");
-            onClose();
           }}
         >
           <span className="fs-1 text-danger">&times;</span>

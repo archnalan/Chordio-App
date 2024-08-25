@@ -7,6 +7,7 @@ import {
 } from "../../../DataModels/CategoryModel";
 import CategoryRequest from "../../../API/CategoryRequest";
 import CategorySuccess from "./CategorySuccess";
+import { Link } from "react-router-dom";
 
 const CategoryCreate: React.FC = () => {
   const {
@@ -65,7 +66,7 @@ const CategoryCreate: React.FC = () => {
   };
 
   return (
-    <div className="d-flex w-100 vh-100 justify-content-center align-items-start bg-light ">
+    <div className="d-flex w-100 vh-100 justify-content-center align-items-center bg-light ">
       <div className="w-50 border bg-white shadow px-5 pt-3 pd-5 rounded mt-3">
         <h1 className="mb-3">Create a Category</h1>
         <div>
@@ -114,14 +115,13 @@ const CategoryCreate: React.FC = () => {
               </div>
             </div>
 
-            <pre>{JSON.stringify(watch(), null, 2)}</pre>
+            {/* <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
             <div className="d-flex justify-content-end mb-5">
-              <button
-                className="btn btn-sm btn-danger p-2 me-2"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
+              <Link to="/admin/categories">
+                <button className="btn btn-sm btn-danger p-2 me-2">
+                  Cancel
+                </button>
+              </Link>
               <button
                 type="submit"
                 className="btn btn-sm btn-primary p-2"

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { idSchema } from "../../../DataModels/ValidateID";
 import CategoryRequest from "../../../API/CategoryRequest";
 import {
@@ -164,14 +164,13 @@ const CategoryEdit: React.FC = () => {
               </div>
             </div>
 
-            <pre>{JSON.stringify(watch(), null, 2)}</pre>
+            {/*  <pre>{JSON.stringify(watch(), null, 2)}</pre> */}
             <div className="d-flex justify-content-end mb-5">
-              <button
-                className="btn btn-sm btn-danger p-2 me-2"
-                disabled={isSubmitting}
-              >
-                Cancel
-              </button>
+              <Link to="/admin/categories">
+                <button className="btn btn-sm btn-danger p-2 me-2">
+                  Cancel
+                </button>
+              </Link>
               <button
                 type="submit"
                 className="btn btn-sm btn-primary p-2"
