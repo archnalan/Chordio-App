@@ -1,30 +1,51 @@
-# React + TypeScript + Vite
+# Chordio App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Chordio is a guitarist's dream tool that provides a userfriendly interface for creating and reading music chords. Chordio removes all the friction so you can add the right chords and start playing along your favorite songs. Chordio is not a music app, rather a song book that records all your song lyrics with their chords ready for you to play along.
 
-Currently, two official plugins are available:
+## Technologies used
+1. Front-End:
+  * React
+  * TypeScript
+  * JavaScript
+  * Vite
+  * Bootstrap
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+2. Data Validation:
+  * Zod
+  * react-hook-form
 
-## Expanding the ESLint configuration
+3.Back-End:
+  * C#
+  * .Net 8
+  * Entity Framework Core
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+4.Communication:
+  * CORS
+  * HttpClient
 
-- Configure the top-level `parserOptions` property like this:
+## Using the App  
+1. Whereas the final user will search a song and start play along the music, we need to collect the data first. The Application has different sections for pages, song collections, categories, chords and chord charts. Creation of Pages and other sections have integration of zod in react-hook-forms for validation and enhancing user experience. 
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+<img src="/UI_screenshots/error handling.JPG" alt="createPage" width="500"/>
+Note: Here is how the form looks like! Note that the Json is not part of the UI but an aid that will be turned off before launching the app.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+2. A collection of created items is displayed on a paginated list. Chords are shown here in alist of cards that dislay each music chart that gets created.
+
+<img src="/UI_screenshots/chord charts.JPG" alt="createPage" width="500"/>
+
+3. Unlike Chord charts that appear as cards, items such as pages, songs, categories appear in tabular form as below. Beside each list item are action buttons that allow you to view details, edit and or delete the item from the list.
+
+<img src="/UI_screenshots/category list.JPG" alt="createPage" width="500"/>
+
+4.Once an element is created, We have a details page that displays all the information associated to the created element. Here as an example is all information stored reguarding the F chord.
+
+<img src="/UI_screenshots/details page.JPG" alt="createPage" width="500"/>
+
+5. As the list of items grows, it can be a challenge to find a specific item. This is why we need a search functionality to find items quicker as shown below.
+<img src="/UI_screenshots/search functionality.JPG" alt="createPage" width="500"/>
+
+6.To avoid accidental deletions, A confirmation step is necessary before removing any item.
+
+<img src="/UI_screenshots/popup message.JPG" alt="createPage" width="500"/>
+
+7. Now you can hire me. Your Application ideas will come to life!
