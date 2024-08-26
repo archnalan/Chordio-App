@@ -11,11 +11,11 @@ import { AxiosError } from "axios";
 
 type ChordEditType = {
   chordToEdit: ChordEditModel;
-  onClose: () => void;
+  setEditedName: React.Dispatch<React.SetStateAction<string>>;
   setOpenChordEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const ChordEdit: React.FC<ChordEditType> = ({
-  onClose,
+  setEditedName,
   chordToEdit,
   setOpenChordEdit,
 }) => {
@@ -64,6 +64,7 @@ const ChordEdit: React.FC<ChordEditType> = ({
         setIsSuccess(
           `Chord ${chordToEdit.chordName} updated to ${data.chordName} successfully!`
         );
+        setEditedName(data.chordName);
       }
     } catch (error) {
       const axiosError = error as AxiosError<ChordEditModel>;
@@ -140,7 +141,6 @@ const ChordEdit: React.FC<ChordEditType> = ({
                 onClick={() => {
                   setOpenChordEdit(false);
                   setValue("chordName", "");
-                  onClose();
                 }}
               >
                 Cancel

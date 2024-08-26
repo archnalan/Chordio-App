@@ -13,9 +13,13 @@ import AudioPreview from "./AudioPreview";
 import ChartPreview from "./ChartPreview";
 import { apiEndpoints } from "../../../API/ChartRequest";
 import API from "../../../API/API";
+import ChordCreate from "../Chords/ChordCreate";
 
 const ChartCreate: React.FC = () => {
   const [chords, setChords] = useState<ChordModel[]>([]);
+  const [openCreateChord, setOpenCreateChord] = useState(false);
+  const [createdName, setCreatedName] = useState("");
+  const [createdChord, setCreatedChord] = useState<ChordModel>();
   const [chartPreview, setChartPreview] = useState("");
   const [audioPreview, setAudioPreview] = useState("");
 
@@ -23,6 +27,7 @@ const ChartCreate: React.FC = () => {
 
   const {
     register,
+    trigger,
     watch,
     setValue,
     setError,
@@ -53,15 +58,26 @@ const ChartCreate: React.FC = () => {
           );
           return;
         }
-        if (chordResult.data.length > 0) {
+        const chordData = chordResult.data;
+
+        if (chordData.length > 0) {
           setChords(chordResult.data);
+        }
+
+        if (createdName !== "") {
+          const newChord = chordData.find((c) => c.chordName === createdName);
+          if (newChord) {
+            setCreatedChord(newChord);
+            setValue("chordId", newChord.id);
+            trigger("chordId");
+          }
         }
       } catch (error) {
         console.error(error);
       }
     };
     chordFetch();
-  }, []);
+  }, [createdName]);
 
   const handleChartUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     //clear previous states
@@ -208,7 +224,7 @@ const ChartCreate: React.FC = () => {
   };
 
   return (
-    <div className="d-flex w-100 vh-100 justify-content-center align-items-start bg-light mt-3">
+    <div className="d-flex w-100 vh-100 justify-content-center align-items-start position-relative bg-light mt-3">
       <div className="w-50 border bg-white shadow px-5 pt-3 pd-5 rounded">
         <h1 className="mb-4">Create a chart</h1>
         <div>
@@ -218,7 +234,7 @@ const ChartCreate: React.FC = () => {
           >
             <div className="mb-3 d-flex justify-content-between">
               <label htmlFor="chord">
-                <strong className="fs-5">Chord:</strong>
+                <strong className="fs-5">Chord</strong>
               </label>
               <div className="w-75 d-flex flex-column">
                 <div className=" d-flex justify-content-between mb-2">
@@ -228,7 +244,14 @@ const ChartCreate: React.FC = () => {
                       setValueAs: (v) => parseInt(v),
                     })}
                   >
-                    <option value="">Pick a Chord</option>
+                    {createdChord ? (
+                      <option value={createdChord.id}>
+                        {createdChord.chordName}
+                      </option>
+                    ) : (
+                      <option value="">Pick a Chord</option>
+                    )}
+
                     {chords &&
                       chords.map((chord, index) => (
                         <option key={index} value={chord.id}>
@@ -236,13 +259,16 @@ const ChartCreate: React.FC = () => {
                         </option>
                       ))}
                   </select>
-                  <Link
-                    to="/admin/chords/create"
-                    className="btn btn-info flex-fill position-relative"
-                  >
-                    Chord
+                  <div className="position-relative">
+                    <button
+                      className="btn btn-info flex-fill "
+                      onClick={() => setOpenCreateChord(true)}
+                    >
+                      Chord
+                    </button>
+
                     <RiAddCircleFill className="position-absolute top-50 start-0 translate-middle bg-info rounded-5" />
-                  </Link>
+                  </div>
                 </div>
                 {errors.chordId && (
                   <p className="text-danger text-sm">
@@ -326,12 +352,12 @@ const ChartCreate: React.FC = () => {
             </div>
             <div className="mb-3 d-flex justify-content-between">
               <label htmlFor="description">
-                <strong className="fs-5"> Description</strong>
+                <strong className="fs-5">Notes</strong>
               </label>
               <div className="w-75 d-flex flex-column ">
                 <textarea
                   id="floatingTextarea2"
-                  className="form-control overflow-scroll"
+                  className="w-100 form-control "
                   placeholder="Describe here..."
                   style={{ width: "75%", height: "100px" }}
                   {...register("positionDescription")}
@@ -343,7 +369,7 @@ const ChartCreate: React.FC = () => {
                 )}
               </div>
             </div>
-            <pre>
+            {/* <pre>
               {JSON.stringify(
                 watch(),
                 (key, value) => {
@@ -354,7 +380,7 @@ const ChartCreate: React.FC = () => {
                 },
                 2
               )}
-            </pre>
+            </pre> */}
             <div className="d-flex justify-content-end ms-2 mb-3">
               <Link to="/admin/chordcharts" className="btn btn-danger me-3">
                 <button className="btn btn-danger " disabled={isSubmitting}>
@@ -375,6 +401,12 @@ const ChartCreate: React.FC = () => {
           </form>
         </div>
       </div>
+      {openCreateChord && (
+        <ChordCreate
+          setOpenChordCreate={setOpenCreateChord}
+          setCreatedName={setCreatedName}
+        />
+      )}
     </div>
   );
 };

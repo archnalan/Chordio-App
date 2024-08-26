@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FiEdit, FiList, FiTrash2 } from "react-icons/fi";
 import { MdOutlineNavigateBefore, MdOutlineNavigateNext } from "react-icons/md";
 import { Link } from "react-router-dom";
@@ -10,15 +10,16 @@ import "./ChordCard.css";
 type ChordCardType = {
   charts: ChartModel[];
   currentChords: ChordModel[];
+
   fetchChord: (id: number) => Promise<void>;
   setToDelete: (chart: ChordModel) => void;
-  setOpenConfirm: React.Dispatch<SetStateAction<boolean>>;
+  setOpenConfirm: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenChordEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 const ChordCard: React.FC<ChordCardType> = ({
   charts,
-  fetchChord,
   currentChords,
+  fetchChord,
   setToDelete,
   setOpenConfirm,
   setOpenChordEdit,

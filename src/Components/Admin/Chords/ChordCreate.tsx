@@ -8,11 +8,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import "./ChordCreate.css";
 import { AxiosError } from "axios";
+import { IoCheckmarkCircleOutline } from "react-icons/io5";
 
 type ChordCreateType = {
+  setCreatedName: React.Dispatch<React.SetStateAction<string>>;
   setOpenChordCreate: React.Dispatch<React.SetStateAction<boolean>>;
 };
-const ChordCreate: React.FC<ChordCreateType> = ({ setOpenChordCreate }) => {
+const ChordCreate: React.FC<ChordCreateType> = ({
+  setCreatedName,
+  setOpenChordCreate,
+}) => {
   const {
     register,
     trigger,
@@ -45,6 +50,7 @@ const ChordCreate: React.FC<ChordCreateType> = ({ setOpenChordCreate }) => {
       if (response && response.status === 201) {
         reset();
         setIsSuccess(`Chord ${data.chordName} created successfully!`);
+        setCreatedName(data.chordName);
       }
     } catch (error) {
       const axiosError = error as AxiosError<ChordCreateModel>;
@@ -82,10 +88,17 @@ const ChordCreate: React.FC<ChordCreateType> = ({ setOpenChordCreate }) => {
 
         {isSuccess && (
           <div
-            className="w-75 alert alert-success text-wrap text-sm"
+            className="w-75 d-flex justify-content-center alert align-items-center alert-success text-wrap"
             role="alert"
           >
-            {isSuccess}
+            <span className="fs-5 me-4">{isSuccess}</span>
+
+            <button
+              className="d-flex align-items-center btn fs-5 text-sm text-primary"
+              onClick={() => setOpenChordCreate(false)}
+            >
+              <IoCheckmarkCircleOutline />K
+            </button>
           </div>
         )}
 
@@ -114,7 +127,6 @@ const ChordCreate: React.FC<ChordCreateType> = ({ setOpenChordCreate }) => {
             <div className="d-flex justify-content-end ms-2 mb-3">
               <button
                 className="btn btn-danger me-4"
-                disabled={isSubmitting}
                 onClick={() => setOpenChordCreate(false)}
               >
                 Cancel

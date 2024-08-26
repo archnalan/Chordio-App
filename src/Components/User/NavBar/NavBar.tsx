@@ -28,7 +28,6 @@ const NavBar = () => {
     const fetchPages = async () => {
       try {
         const response = await fetchAllPages();
-        console.log("🚀 ~ fetchPages ~ response:", response);
 
         const pageResult = PageSchema.array().safeParse(response.data.$values);
 
@@ -38,7 +37,7 @@ const NavBar = () => {
             pageResult.error
           );
         } else {
-          console.log("🚀 ~ fetchPages ~ pageResult.data:", pageResult.data);
+          /*  console.log("🚀 ~ fetchPages ~ pageResult.data:", pageResult.data); */
           setPages(pageResult.data.slice(0, 4)); // the first 4 pages from the db
         }
       } catch (error) {

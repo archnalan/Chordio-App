@@ -25,6 +25,10 @@ const Chord: React.FC = () => {
   const [openChordCreate, setOpenChordCreate] = useState(false);
   const [openChordEdit, setOpenChordEdit] = useState(false);
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [editedName, setEditedName] = useState("");
+  const [editedChord, setEditedChord] = useState<ChordModel>();
+  const [createdName, setCreatedName] = useState("");
+  const [createdChord, setCreatedChord] = useState<ChordModel>();
   const [chord, setChord] = useState<ChordEditModel>();
   const [toDelete, setToDelete] = useState<ChordModel>();
   const [errorDelete, setErrorDelete] = useState("");
@@ -58,14 +62,35 @@ const Chord: React.FC = () => {
           );
           return;
         }
-        setChords(validateChords.data);
-        setfilteredChords(validateChords.data);
+        const chordData = validateChords.data;
+        let chordDisplay = [...chordData];
+
+        //Display chords that have been added or edited first
+        if (editedName !== "" || createdName !== "") {
+          const editedChord = chordData.find((c) => c.chordName === editedName);
+          const createdChord = chordData.find(
+            (c) => c.chordName === createdName
+          );
+
+          if (createdChord) {
+            setCreatedChord(createdChord);
+            console.log("🚀 ~ FetchChords ~ createdChord:", createdChord);
+            chordDisplay.unshift(createdChord); //created chord at 1st pstn
+          }
+          if (editedChord) {
+            setEditedChord(editedChord);
+            console.log("🚀 ~ FetchChords ~ editedChord:", editedChord);
+            chordDisplay.unshift(editedChord); //edited chord at 1st pstn
+          }
+        }
+        setChords(chordDisplay);
+        setfilteredChords(chordDisplay);
       } catch (error) {
         console.error(error);
       }
     };
     FetchChords();
-  }, []);
+  }, [editedName, createdName]);
 
   useEffect(() => {
     const FetchCharts = async () => {
@@ -125,10 +150,6 @@ const Chord: React.FC = () => {
     } catch (error) {
       console.error("🚀 ~ fetchChord ~ error:", error);
     }
-  };
-
-  const handleReload = () => {
-    window.location.reload();
   };
 
   const handleDelete = (chord: ChordModel) => {
@@ -210,12 +231,15 @@ const Chord: React.FC = () => {
             <Pagination pageCount={pageCount} onPageChange={handlePageChange} />
           </div>
           {openChordCreate && (
-            <ChordCreate setOpenChordCreate={setOpenChordCreate} />
+            <ChordCreate
+              setCreatedName={setCreatedName}
+              setOpenChordCreate={setOpenChordCreate}
+            />
           )}
           {openChordEdit && chord && (
             <ChordEdit
               chordToEdit={chord}
-              onClose={handleReload}
+              setEditedName={setEditedName}
               setOpenChordEdit={setOpenChordEdit}
             />
           )}

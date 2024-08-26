@@ -4,6 +4,7 @@ import API from "./API";
 const apiEndpoints = {
   fetchAllChords: 'admin/api_chords',
   fetchChordById: (id: number) => `admin/api_chords/${id}`,
+  fetchChordByName: (name: string) => `admin/api_chords/${name}`,
   fetchChordsWithCharts: 'admin/api_chords/chords',
   createChord: 'admin/api_chords/create',
   createWithChart: 'admin/api_chords/create_with_chart',
@@ -19,6 +20,7 @@ const apiEndpoints = {
 
 const fetchAllChords = () => API.get(apiEndpoints.fetchAllChords);
 const fetchChordById = (id: number) => API.get(apiEndpoints.fetchChordById(id));
+const fetchChordByName = (name: string) => API.get(apiEndpoints.fetchChordByName(name));
 const fetchChordsWithCharts = () => API.get(apiEndpoints.fetchChordsWithCharts);
 const createChord = (chordData: ChordCreateModel) => API.post(apiEndpoints.createChord, chordData);
 const createWithChart = (chordData: ChordModel) => API.post(apiEndpoints.createWithChart, chordData);
@@ -34,6 +36,7 @@ const deleteManyChords = (ids: number[]) => API.post(apiEndpoints.deleteManyChor
 export default {
   fetchAllChords,
   fetchChordById,
+  fetchChordByName,
   fetchChordsWithCharts,
   createChord,
   createWithChart,
